@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<title>Kraliyet Yükleme Merkezi</title>
+<style>
+:root{--bg:#070707;--card:#111;--gold:#d8ad45;--gold2:#f5d77b;--muted:#aaa;--line:#2b2415}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#211a0b 0,#080808 38%,#050505 100%);color:#f5f1e5;font-family:Arial,sans-serif}
+header{padding:22px 16px 14px;text-align:center;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(5,5,5,.94);backdrop-filter:blur(10px);z-index:5}
+.crown{font-size:30px}.title{font-size:21px;font-weight:800;color:var(--gold2);letter-spacing:.4px}.sub{font-size:11px;color:#888;margin-top:4px}
+main{max-width:720px;margin:auto;padding:14px 12px 40px}.card{background:linear-gradient(145deg,#151515,#0d0d0d);border:1px solid #29210f;border-radius:16px;padding:15px;margin-bottom:12px;box-shadow:0 8px 25px #0008}
+h2{font-size:15px;color:var(--gold2);margin:0 0 13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.full{grid-column:1/-1}
+label{font-size:11px;color:#aaa;display:block;margin:0 0 5px}
+input,select{width:100%;background:#090909;color:#fff;border:1px solid #383020;border-radius:10px;padding:11px;font-size:14px;outline:none}input:focus,select:focus{border-color:var(--gold)}
+.options{display:flex;gap:7px}.opt{flex:1;padding:10px 5px;border:1px solid #3a301b;border-radius:10px;text-align:center;font-size:12px;color:#ddd;cursor:pointer}.opt.active{background:#9b7525;color:#fff;border-color:var(--gold2);box-shadow:0 0 12px #c99b3830}
+button{border:0;border-radius:11px;padding:12px 14px;background:linear-gradient(135deg,#f0c85e,#a87818);color:#080808;font-weight:800;cursor:pointer}.danger{background:#251111;color:#ffb0a5;border:1px solid #4d211c}.secondary{background:#191919;color:#e9d18a;border:1px solid #49391a}
+.result{font-size:12px;color:#bbb;margin-top:9px}.result b{color:var(--gold2)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kpi{background:#0a0a0a;border:1px solid #29210f;border-radius:12px;padding:10px}.kpi span{display:block;color:#888;font-size:10px}.kpi strong{display:block;margin-top:4px;font-size:15px;color:#f1d27a}
+.tabs{display:flex;gap:6px;overflow:auto;margin-bottom:9px}.tab{white-space:nowrap;padding:8px 10px;border-radius:9px;background:#0b0b0b;border:1px solid #302716;color:#aaa;font-size:11px;cursor:pointer}.tab.active{color:#111;background:var(--gold2)}
+.row{display:grid;grid-template-columns:28px 1fr 72px 55px 58px 72px;gap:5px;align-items:center;padding:9px 0;border-bottom:1px solid #211d16;font-size:10px}.row.head{color:#806f49;font-weight:bold}.row .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.actions{display:flex;gap:4px}.mini{padding:6px 7px;font-size:10px}.empty{text-align:center;color:#777;padding:20px 0;font-size:12px}
+.pages{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.pages button{padding:8px 11px;font-size:11px}
+.note{font-size:10px;color:#777;line-height:1.5}.gold{color:var(--gold2)}
+@media(max-width:500px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.row{grid-template-columns:22px 1fr 65px 45px 52px 64px;font-size:9px}.row .actions button{padding:5px}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div class="crown">♛</div><div class="title">KRALİYET YÜKLEME MERKEZİ</div><div class="sub">Siyah • Gold • İşlem Yönetim Merkezi</div></header>
+<main>
+<section class="card">
+<h2>👑 Yeni Yükleme / Satış</h2>
+<div class="grid">
+<div><label>Müşteri adı</label><input id="name" placeholder="Müşteri adı"></div>
+<div><label>Gelen TL miktarı</label><input id="tl" type="number" min="0" step="0.01" placeholder="0"></div>
+<div><label>Yüklenen jeton miktarı</label><input id="coins" type="number" min="0" step="1" placeholder="0"></div>
+<div><label>Komisyon</label><div class="options" id="comm"><div class="opt active" data-v="0">%0</div><div class="opt" data-v="2">%2</div></div></div>
+<div class="full"><label>Satış fiyatı</label><div class="options" id="price"><div class="opt active" data-v="250">250 ₺</div><div class="opt" data-v="255">255 ₺</div><div class="opt" data-v="260">260 ₺</div></div></div>
+</div>
+<div class="result" id="calc">Birim fiyatı ve tahmini kâr, girişlere göre hesaplanır.</div>
+<button style="width:100%;margin-top:10px" id="save">♛ İşlemi Kaydet</button>
+</section>
+
+<section class="card">
+<h2>💰 Ana Kur</h2>
+<div class="grid">
+<div><label>1.000 USD karşılığı</label><input id="usdTl" type="number" value="49850"></div>
+<div><label>1.000 USD jeton miktarı</label><input id="baseCoins" type="number" value="208500"></div>
+</div>
+<p class="note">Bu iki değer tarayıcıda otomatik saklanır. Sen değiştirmedikçe aynı kalır.</p>
+</section>
+
+<section class="card">
+<h2>📜 Son Alınan Ödemeler</h2>
+<div class="tabs" id="rangeTabs"></div>
+<div class="row head"><div>#</div><div>Müşteri</div><div>Jeton</div><div>%</div><div>Birim</div><div>TL / İşlem</div></div>
+<div id="list"></div><div class="pages"><button class="secondary" id="prev">‹ Önceki</button><span id="pageInfo" class="gold"></span><button class="secondary" id="next">Sonraki ›</button></div>
+</section>
+
+<section class="card">
+<h2>📊 Özet</h2>
+<div class="tabs" id="periodTabs"><div class="tab active" data-p="today">Bugün</div><div class="tab" data-p="week">Bu hafta</div><div class="tab" data-p="month">Bu ay</div><div class="tab" data-p="all">Tüm zamanlar</div></div>
+<div class="kpis">
+<div class="kpi"><span>Toplanan TL</span><strong id="sumTl">0 ₺</strong></div>
+<div class="kpi"><span>Satılan toplam jeton</span><strong id="sumCoins">0</strong></div>
+<div class="kpi"><span>Toplam kâr — TL</span><strong id="profitTl">0 ₺</strong></div>
+<div class="kpi"><span>Toplam kâr — jeton</span><strong id="profitCoins">0</strong></div>
+</div>
+<p class="note" style="margin-bottom:0">Kâr hesabı: satıştan gelen TL − seçilen birim fiyatla aynı jetonun ana kur maliyeti. Komisyon, kayıtta ayrıca korunur.</p>
+</section>
+</main>
+<script>
+const KEY='kraliyet_yukleme_v1';
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{settings:{usdTl:49850,baseCoins:208500},items:[]};
+let commission=0, price=250, page=0, period='today';
+const $=id=>document.getElementById(id);
+function saveData(){localStorage.setItem(KEY,JSON.stringify(data))}
+$('usdTl').value=data.settings.usdTl;$('baseCoins').value=data.settings.baseCoins;
+function money(n){return Number(n||0).toLocaleString('tr-TR',{maximumFractionDigits:2})+' ₺'}
+function num(n){return Number(n||0).toLocaleString('tr-TR')}
+function wireOptions(id,cb){document.querySelectorAll('#'+id+' .opt').forEach(x=>x.onclick=()=>{document.querySelectorAll('#'+id+' .opt').forEach(a=>a.classList.remove('active'));x.classList.add('active');cb(Number(x.dataset.v));updateCalc()})}
+wireOptions('comm',v=>commission=v);wireOptions('price',v=>price=v);
+function updateCalc(){
+ const tl=+$('tl').value||0, c=+$('coins').value||0;
+ const base=+$('baseCoins').value||1, baseTl=+$('usdTl').value||0;
+ const cost=c*(baseTl/base), profit=tl-cost;
+ $('calc').innerHTML=`Ana kur maliyeti: <b>${money(cost)}</b> · Tahmini kâr: <b>${money(profit)}</b> · Seçilen fiyat: <b>${price} ₺</b> · Komisyon: <b>%${commission}</b>`;
+}
+['tl','coins','usdTl','baseCoins'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='usdTl'||id==='baseCoins'){data.settings.usdTl=+$('usdTl').value||0;data.settings.baseCoins=+$('baseCoins').value||0;saveData()}updateCalc()}));
+$('save').onclick=()=>{
+ const name=$('name').value.trim(),tl=+$('tl').value||0,coins=+$('coins').value||0;
+ if(!name||tl<=0||coins<=0){alert('Müşteri adı, TL ve jeton miktarını girin.');return}
+ data.items.unshift({id:Date.now(),name,tl,coins,commission,price,date:new Date().toISOString()});saveData();
+ $('name').value='';$('tl').value='';$('coins').value='';page=0;render();updateCalc();
+};
+function rangeTabs(){let pages=Math.max(1,Math.ceil(data.items.length/10));$('rangeTabs').innerHTML='';for(let i=0;i<pages;i++){let b=document.createElement('div');b.className='tab'+(i===page?' active':'');let a=data.items[i*10],z=data.items[Math.min(i*10+9,data.items.length-1)];b.textContent=a?`${aIndex(i*10)}–${aIndex(Math.min(i*10+9,data.items.length-1))}`:`${i*10+1}–${i*10+10}`;b.onclick=()=>{page=i;render()};$('rangeTabs').appendChild(b)}}
+function aIndex(i){return data.items.length-i}
+function render(){
+ rangeTabs();let arr=data.items.slice(page*10,page*10+10);$('list').innerHTML=arr.length?arr.map((x,i)=>`<div class="row"><div>${data.items.length-(page*10+i)}</div><div class="name" title="${x.name}">${x.name}</div><div>${num(x.coins)}</div><div>%${x.commission}</div><div>${x.price}₺</div><div class="actions"><span>${money(x.tl)}</span><button class="mini secondary" onclick="editItem(${x.id})">Düzenle</button></div></div>`).join(''):'<div class="empty">Henüz kayıtlı işlem yok.</div>';
+ $('pageInfo').textContent=`${data.items.length?data.items.length-page*10:0} kayıt · Sayfa ${page+1}/${Math.max(1,Math.ceil(data.items.length/10))}`;
+ $('prev').disabled=page<=0;$('next').disabled=(page+1)*10>=data.items.length;
+}
+$('prev').onclick=()=>{if(page>0){page--;render()}};$('next').onclick=()=>{if((page+1)*10<data.items.length){page++;render()}};
+window.editItem=id=>{let x=data.items.find(a=>a.id===id);if(!x)return;let n=prompt('Müşteri adı:',x.name);if(n===null)return;let tl=prompt('Gelen TL:',x.tl);let c=prompt('Jeton miktarı:',x.coins);if(tl===null||c===null)return;x.name=n.trim()||x.name;x.tl=+tl||x.tl;x.coins=+c||x.coins;saveData();render();stats()};
+function startOfWeek(d){let x=new Date(d);let day=(x.getDay()+6)%7;x.setHours(0,0,0,0);x.setDate(x.getDate()-day);return x}
+function filterItems(){let now=new Date();return data.items.filter(x=>{let d=new Date(x.date);if(period==='all')return true;if(period==='today')return d.toDateString()===now.toDateString();if(period==='week')return d>=startOfWeek(now);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()})}
+function stats(){let arr=filterItems(),tl=arr.reduce((s,x)=>s+x.tl,0),co=arr.reduce((s,x)=>s+x.coins,0),base=+$('baseCoins').value||1,btl=+$('usdTl').value||0,cost=co*btl/base;let profit=tl-cost;$('sumTl').textContent=money(tl);$('sumCoins').textContent=num(co);$('profitTl').textContent=money(profit);$('profitCoins').textContent=num(profit/(btl/base||1))}
+document.querySelectorAll('#periodTabs .tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('#periodTabs .tab').forEach(a=>a.classList.remove('active'));t.classList.add('active');period=t.dataset.p;stats()});
+render();updateCalc();stats();
+</script>
+</body>
+</html>
