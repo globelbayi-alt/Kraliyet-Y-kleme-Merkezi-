@@ -24,6 +24,13 @@ button{border:0;border-radius:11px;padding:12px 14px;background:linear-gradient(
 .note{font-size:10px;color:#777;line-height:1.5}.gold{color:var(--gold2)}
 @media(max-width:500px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.row{grid-template-columns:22px 1fr 65px 45px 52px 64px;font-size:9px}.row .actions button{padding:5px}.kpis{grid-template-columns:1fr 1fr}}
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kraliyet Yükleme Merkezi">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 <header><div class="crown">♛</div><div class="title">KRALİYET YÜKLEME MERKEZİ</div><div class="sub">Siyah • Gold • İşlem Yönetim Merkezi</div></header>
@@ -107,6 +114,9 @@ function filterItems(){let now=new Date();return data.items.filter(x=>{let d=new
 function stats(){let arr=filterItems(),tl=arr.reduce((s,x)=>s+x.tl,0),co=arr.reduce((s,x)=>s+x.coins,0),base=+$('baseCoins').value||1,btl=+$('usdTl').value||0,cost=co*btl/base;let profit=tl-cost;$('sumTl').textContent=money(tl);$('sumCoins').textContent=num(co);$('profitTl').textContent=money(profit);$('profitCoins').textContent=num(profit/(btl/base||1))}
 document.querySelectorAll('#periodTabs .tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('#periodTabs .tab').forEach(a=>a.classList.remove('active'));t.classList.add('active');period=t.dataset.p;stats()});
 render();updateCalc();stats();
+</script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
 </script>
 </body>
 </html>
